@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Crails;
 
-string ProjectVariables::lookup_variable_path()
+string ProjectVariables::lookup_variable_path() const
 {
   auto path = filesystem::canonical(filesystem::current_path());
 

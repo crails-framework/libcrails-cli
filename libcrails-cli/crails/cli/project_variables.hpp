@@ -17,7 +17,8 @@ namespace Crails
     void        initialize();
     void        save();
 
-    std::string variable(const std::string& name) const { return variables.find(name) != variables.end() ? variables.at(name) : ""; }
+    std::string variable_or(const std::string& name, const std::string& fallback) const { return variables.find(name) != variables.end() ? variables.at(name) : fallback; }
+    std::string variable(const std::string& name) const { return variable_or(name, ""); }
     void        variable(const std::string& name, const std::string& value) { variables[name] = value; }
   };
 }

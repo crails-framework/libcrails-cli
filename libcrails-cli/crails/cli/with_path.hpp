@@ -7,7 +7,7 @@ namespace Crails
   {
     const std::filesystem::path old_path;
   public:
-    WithPath(std::filesystem::path new_path) : old_path(boost::filesystem::current_path())
+    WithPath(std::filesystem::path new_path) : old_path(std::filesystem::current_path())
     {
       std::filesystem::create_directories(new_path);
       std::filesystem::current_path(new_path);

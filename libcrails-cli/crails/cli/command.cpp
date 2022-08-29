@@ -1,5 +1,6 @@
 #include "command.hpp"
 #include <boost/filesystem.hpp>
+#include <iostream>
 
 using namespace std;
 using namespace Crails;
@@ -14,7 +15,7 @@ bool Command::initialize(int argc, const char** argv)
   boost::program_options::notify(options);
   if (options.count("help"))
   {
-    std::cout << "usage: " << argv[0] << " [options]" << std::endl << desc;
+    cout << "usage: " << argv[0] << " [options]" << endl << desc;
     return false;
   }
   return true;
