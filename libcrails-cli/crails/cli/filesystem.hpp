@@ -6,6 +6,7 @@ using namespace std;
 
 namespace Crails
 {
-  bool prompt_write_file(const std::string& task_name, const std::filesystem::path& path);
+  bool require_folder(const std::filesystem::path&);
+  bool prompt_write_file(const std::string& task_name, const std::filesystem::path&);
   bool write_file(const std::string& task_name, const std::string& filepath, const std::string& contents);
 }

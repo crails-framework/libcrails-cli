@@ -6,6 +6,25 @@ using namespace std;
 
 namespace Crails
 {
+  bool require_folder(const string& task_name, const filesystem::path& path)
+  {
+    filesystem::path directory(path.parent_path());
+
+    if (directory.string().length() > 0 && !filesystem::is_directory(directory))
+    {
+      error_code ec;
+
+      filesystem::create_directories(directory, ec);
+      if (ec)
+      {
+        cout << '[' << task_name << "] Failed to create directory " << directory.generic_string() << ": " << ec.message() << endl;
+        return false;
+      }
+      cout << '[' << task_name << "] Created directory " << directory.generic_string() << endl;
+    }
+    return true;
+  }
+
   bool prompt_write_file(const string& task_name, const filesystem::path& path)
   {
     if (filesystem::exists(path))
