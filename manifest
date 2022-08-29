@@ -1,0 +1,13 @@
+: 1
+name: libcrails-cli
+version: 2.0.0
+summary: command line interface library for the crails framework
+license: other: BSD-3-Clause
+description-file: README.md
+url: https://example.org/libcrails-cli
+email: michael@unetresgrossebite.com
+#build-error-email: michael@unetresgrossebite.com
+depends: * build2 >= 0.15.0
+depends: * bpkg >= 0.15.0
+depends: libboost-program-options >= 1.74
+depends: libcrails-readfile ^2.0.0

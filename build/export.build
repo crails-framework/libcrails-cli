@@ -1,0 +1,6 @@
+$out_root/
+{
+  include libcrails-cli/
+}
+
+export $out_root/libcrails-cli/$import.target
