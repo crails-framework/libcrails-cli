@@ -9,5 +9,5 @@ email: michael@unetresgrossebite.com
 #build-error-email: michael@unetresgrossebite.com
 depends: * build2 >= 0.15.0
 depends: * bpkg >= 0.15.0
-depends: libboost-program-options >= 1.74
+depends: { libboost-process libboost-program-options } >= 1.74
 depends: { libcrails-readfile libcrails-semantics } ^2.0.0

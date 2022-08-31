@@ -50,7 +50,8 @@ namespace Crails
     if (contents != original_source)
     {
       ofstream file(filepath.c_str());
-      filesystem::create_directories(filesystem::path(filepath).parent_path());
+
+      filesystem::create_directories(filesystem::canonical(filesystem::path(filepath)).parent_path());
       if (file.is_open())
       {
         file.write(contents.c_str(), contents.length());
