@@ -40,7 +40,7 @@ shared_ptr<Command> CommandIndex::find_command(string_view name)
 {
   for (auto it = commands.begin() ; it != commands.end() ; ++it)
   {
-    if (it->first == name)
+    if (it->first == name || (name.length() == 1 && it->first[0] == name[0]))
       return it->second();
   }
   return nullptr;
