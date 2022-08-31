@@ -24,10 +24,11 @@ string ProjectVariables::lookup_variable_path() const
 
 void ProjectVariables::initialize()
 {
+  string       path = lookup_variable_path() + '/' + filepath;
   string       configuration_contents;
   list<string> configuration_lines;
 
-  Crails::read_file(filepath, configuration_contents);
+  Crails::read_file(path, configuration_contents);
   configuration_lines = Crails::split(configuration_contents, '\n');
   for (auto configuration_line : configuration_lines)
   {
