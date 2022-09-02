@@ -22,14 +22,14 @@ namespace Crails
 
       if (argc > 0)
       {
-        auto it = scaffolds.find(string(argv[1]));
+        auto it = scaffolds.find(std::string(argv[1]));
 
         if (it == scaffolds.end())
         {
           std::cerr << "Unknown scaffold type " << type << std::endl;
-          return fale;
+          return false;
         }
-        model = it->second();
+        model.reset(it->second());
         return Command::initialize(argc - 1, &argv[1]);
       }
       else
@@ -41,7 +41,7 @@ namespace Crails
       return false;
     }
 
-    void options_description(boost::program_options::options_description& desc) const override
+    virtual void options_description(boost::program_options::options_description& desc) const override
     {
       if (model)
         model->options_description(desc);

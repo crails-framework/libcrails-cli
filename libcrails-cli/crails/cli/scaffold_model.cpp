@@ -2,6 +2,7 @@
 #include "scaffold_model.hpp"
 
 using namespace std;
+using namespace Crails;
 
 map<string, string> ScaffoldModel::properties_option(const boost::program_options::variables_map& options)
 {
