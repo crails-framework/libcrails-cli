@@ -16,6 +16,7 @@ NamingConvention::NamingConvention()
   filenames  = std::bind(&Crails::underscore, std::placeholders::_1);
   classnames = std::bind(&Crails::camelize, std::placeholders::_1, Crails::UpperCamelcase);
   functions  = std::bind(&Crails::underscore, std::placeholders::_1);
+  keys       = std::bind(&Crails::dasherize, std::placeholders::_1);
 }
 
 static NamingConvention::Transformation* find_transformation(const string& name)
@@ -23,6 +24,7 @@ static NamingConvention::Transformation* find_transformation(const string& name)
   if (name == "filenames")  { return &naming_convention.filenames; }
   if (name == "classnames") { return &naming_convention.classnames; }
   if (name == "functions")  { return &naming_convention.functions; }
+  if (name == "keys")       { return &naming_convention.keys; }
   return nullptr;
 }
 

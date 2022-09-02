@@ -12,7 +12,7 @@ namespace Crails
 
     bool load_from_file(const std::string& path);
 
-    Transformation filenames, classnames, functions;
+    Transformation filenames, classnames, functions, keys;
   };
 
   extern NamingConvention naming_convention;
