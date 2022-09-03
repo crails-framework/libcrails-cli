@@ -1,13 +1,9 @@
 #pragma once
 #include "with_path.hpp"
+#include "process.hpp"
+#include "build_options.hpp"
 #include <boost/process.hpp>
 #include <filesystem>
-
-enum CMakeBuildOptions
-{
-  CMakeVerbose = 1,
-  CMakeClean = 2
-};
 
 class CMakeBuilder : private Crails::WithPath
 {
@@ -19,14 +15,19 @@ public:
     Crails::WithPath(build_directory),
     project_directory(project_directory)
   {
-    verbose = options & CMakeVerbose;
-    should_clean = options & CMakeClean;
+    verbose = options & BuildVerbose;
+    should_clean = options & BuildClean;
   }
 
   CMakeBuilder& option(const std::string& name, const std::string& value)
   {
     options << "-D" << name << '=' << value << ' ';
     return *this;
+  }
+
+  static bool installed()
+  {
+    return Crails::which("cmake").length() > 0;
   }
 
   bool configure()
