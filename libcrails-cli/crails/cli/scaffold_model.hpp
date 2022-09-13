@@ -6,6 +6,7 @@ namespace Crails
   class ScaffoldModel
   {
   public:
+    virtual ~ScaffoldModel() {}
     virtual void options_description(boost::program_options::options_description& desc) const = 0;
     virtual int create(boost::program_options::variables_map&) = 0;
 

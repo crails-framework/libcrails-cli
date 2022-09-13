@@ -15,7 +15,7 @@ bool CommandIndex::initialize(int argc, const char ** argv)
       list_commands(argc, argv);
       return true;
     }
-    else if (command = find_command(command_name))
+    else if ((command = find_command(command_name)))
       return command->initialize(argc - 1, &argv[1]);
     else
       cerr << "Command `" << argv[1] << "` not found." << endl;

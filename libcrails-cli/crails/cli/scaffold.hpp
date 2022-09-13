@@ -20,7 +20,7 @@ namespace Crails
     {
       auto scaffolds = available_scaffolds();
 
-      if (argc > 0)
+      if (argc > 1)
       {
         auto it = scaffolds.find(std::string(argv[1]));
 
@@ -47,7 +47,7 @@ namespace Crails
         model->options_description(desc);
     }
 
-    int run()
+    int run() override
     {
       model->create(options);
       return 0;
