@@ -42,6 +42,13 @@ namespace Crails
     return true;
   }
 
+  static void make_file_directory(const filesystem::path& filepath)
+  {
+    filesystem::path parent = filepath.parent_path();
+    if (parent.string().length() > 0)
+      filesystem::create_directories(parent);
+  }
+
   bool write_file(const string& task_name, const string& filepath, const string& contents)
   {
     string original_source;
@@ -49,9 +56,8 @@ namespace Crails
 
     if (contents != original_source)
     {
+      make_file_directory(filesystem::path(filepath));
       ofstream file(filepath.c_str());
-
-      filesystem::create_directories(filesystem::canonical(filesystem::path(filepath)).parent_path());
       if (file.is_open())
       {
         file.write(contents.c_str(), contents.length());
