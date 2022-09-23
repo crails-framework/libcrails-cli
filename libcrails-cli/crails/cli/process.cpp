@@ -30,6 +30,18 @@ namespace Crails
     return process.exit_code() == 0;
   }
 
+  bool run_command(const string& command, string& result)
+  {
+    boost::process::ipstream stream;
+    boost::process::child process(command, boost::process::std_out > stream);
+    string line;
+
+    while (process.running() && getline(stream, line) && !line.empty())
+      result += line + '\n';
+    process.wait();
+    return process.exit_code() == 0;
+  }
+
   int execve(const string& command, const vector<string>& arguments)
   {
     if (command.length() > 0)
