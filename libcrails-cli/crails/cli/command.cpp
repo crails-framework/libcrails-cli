@@ -1,5 +1,4 @@
 #include "command.hpp"
-#include <boost/filesystem.hpp>
 #include <iostream>
 
 using namespace std;
