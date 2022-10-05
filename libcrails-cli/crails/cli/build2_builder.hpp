@@ -4,6 +4,7 @@
 #include "build_options.hpp"
 #include <filesystem>
 #include <sstream>
+#include <map>
 
 class Build2Builder : public Crails::WithPath
 {
