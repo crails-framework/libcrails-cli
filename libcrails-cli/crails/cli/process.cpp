@@ -51,7 +51,7 @@ namespace Crails
       argv[0] = command.c_str();
       for (size_t i = 1 ; i <= arguments.size() ; ++i)
         argv[i] = arguments[i - 1].c_str();
-      argv[arguments.size()] = nullptr;
+      argv[arguments.size() + 1] = nullptr;
 #ifndef _WIN32
       return ::execve(command.c_str(), const_cast<char **const>(argv), nullptr);
 #else
