@@ -5,6 +5,7 @@
 #include <boost/process.hpp>
 #include <boost/process/env.hpp>
 #include <filesystem>
+#include <iostream>
 
 class CMakeBuilder : private Crails::WithPath
 {
@@ -34,14 +35,17 @@ public:
   boost::process::native_environment environment()
   {
     auto env = boost::this_process::environment();
+    std::string pkg_config_path = "/usr/local/lib/pkgconfig";
 
-    env["PKG_CONFIG_PATH"] = "/usr/local/lib/pkgconfig";
+    env["PKG_CONFIG_PATH"] = pkg_config_path;
     return env;
   }
 
   bool configure()
   {
-    boost::process::child cmake("cmake " + options.str() + project_directory.string(), environment());
+    std::string command = "cmake " + options.str() + project_directory.string();
+    if (verbose) std::cout << "+ " << command << std::endl;
+    boost::process::child cmake(command, environment());
 
     cmake.wait();
     return cmake.exit_code() == 0;
@@ -49,7 +53,9 @@ public:
 
   bool make()
   {
-    boost::process::child make(verbose ? "make VERBOSE=1" : "make", environment());
+    std::string command = verbose ? "make VERBOSE=1" : "make";
+    if (verbose) std::cout << "+ " << command << std::endl;
+    boost::process::child make(command, environment());
 
     make.wait();
     return make.exit_code() == 0;
