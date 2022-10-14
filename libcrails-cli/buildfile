@@ -1,4 +1,4 @@
-#import intf_libs = libboost-process%lib{boost_process}
+import intf_libs += libboost-process%lib{boost_process}
 import intf_libs += libboost-program-options%lib{boost_program_options}
 import intf_libs += libcrails-readfile%lib{crails-readfile}
 import intf_libs += libcrails-semantics%lib{crails-semantics}
