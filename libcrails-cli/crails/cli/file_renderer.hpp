@@ -1,7 +1,9 @@
 #pragma once
 #include <crails/cli/filesystem.hpp>
 #include <crails/shared_vars.hpp>
+#include <crails/render_target.hpp>
 #include <filesystem>
+#include <iostream>
 
 namespace Crails
 {
@@ -28,7 +30,7 @@ namespace Crails
     {
       Crails::RenderString render_target;
 
-      if (renderer.can_render("", template_name.data()))
+      if (renderer.can_render(template_name.data()))
       {
         if (Crails::require_folder("DIR", path.string()))
         {
