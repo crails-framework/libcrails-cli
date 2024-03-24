@@ -50,7 +50,7 @@ bool NamingConvention::load_from_file(const string& path)
       {
         auto* transformation = find_transformation(*parts.begin());
 
-        if (*parts.rbegin() == "dash" && *parts.begin() != "filenames")
+        if (*parts.rbegin() == "dash" && *parts.begin() != "filenames" && *parts.begin() != "keys")
           cerr << "NamingConvention: dash is not acceptable for " << *parts.begin() << endl;
         else if (transformation)
           set_convention(*transformation, *parts.rbegin());
