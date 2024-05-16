@@ -24,11 +24,17 @@ string ProjectVariables::lookup_variable_path() const
 
 void ProjectVariables::initialize()
 {
-  string       path = lookup_variable_path() + '/' + filepath;
-  string       configuration_contents;
-  list<string> configuration_lines;
+  string path = lookup_variable_path() + '/' + filepath;
+  string configuration_contents;
 
   Crails::read_file(path, configuration_contents);
+  load(configuration_contents);
+}
+
+void ProjectVariables::load(const std::string& configuration_contents)
+{
+  list<string> configuration_lines;
+
   configuration_lines = Crails::split(configuration_contents, '\n');
   for (auto configuration_line : configuration_lines)
   {
@@ -39,11 +45,16 @@ void ProjectVariables::initialize()
   }
 }
 
+void ProjectVariables::append_to_string(string& output)
+{
+  for (auto it = variables.begin() ; it != variables.end() ; ++it)
+    output += it->first + ':' + it->second + '\n';
+}
+
 void ProjectVariables::save()
 {
-  stringstream stream;
+  string output;
 
-  for (auto it = variables.begin() ; it != variables.end() ; ++it)
-    stream << it->first << ':' << it->second << '\n';
-  Crails::write_file("FILE", filepath, stream.str());
+  append_to_string(output);
+  Crails::write_file("FILE", filepath, output);
 }

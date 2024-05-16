@@ -15,7 +15,9 @@ namespace Crails
 
     std::string lookup_variable_path() const;
     void        initialize();
+    void        load(const std::string&);
     void        save();
+    void        append_to_string(std::string&);
 
     std::string variable_or(const std::string& name, const std::string& fallback) const { return variables.find(name) != variables.end() ? variables.at(name) : fallback; }
     std::string variable(const std::string& name) const { return variable_or(name, ""); }

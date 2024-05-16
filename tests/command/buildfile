@@ -1,0 +1,6 @@
+import libs += libcrails-cli%lib{crails-cli}
+import libs += libboost-program-options%lib{boost_program_options}
+import libs += libcrails-readfile%lib{crails-readfile}
+import libs += libcrails-semantics%lib{crails-semantics}
+
+exe{driver}: {hxx ixx txx cxx}{**} $libs testscript{**}
