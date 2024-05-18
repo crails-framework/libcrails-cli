@@ -13,7 +13,7 @@ namespace Crails
   string which(const string& command)
   {
     boost::process::ipstream stream;
-    boost::process::child process("which " + command, (boost::process::std_out & boost::process::std_err) > stream);
+    boost::process::child process("which " + command, boost::process::std_out > stream);
     string path;
 
     process.wait();
