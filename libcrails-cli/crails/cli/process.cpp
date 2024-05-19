@@ -1,5 +1,6 @@
 #include "process.hpp"
 #include <boost/process.hpp>
+#include <iostream>
 #ifndef _WIN32
 # include <unistd.h>
 #else
@@ -20,6 +21,16 @@ namespace Crails
     if (process.exit_code() == 0)
       getline(stream, path);
     return path;
+  }
+
+  bool require_command(const string& command)
+  {
+    if (Crails::which(command).length() == 0)
+    {
+      cerr << "Requires `" << command << "` to be installed." << endl;
+      return false;
+    }
+    return true;
   }
 
   bool run_command(const string& command)
