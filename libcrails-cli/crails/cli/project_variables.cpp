@@ -13,10 +13,10 @@ string ProjectVariables::lookup_variable_path() const
 {
   auto path = filesystem::canonical(filesystem::current_path());
 
-  while (!filesystem::exists(path.string() + '/' + filepath))
+  while (!filesystem::exists(path.string() + '/' + filename))
   {
     if (path == path.parent_path())
-      throw runtime_error("Failed to find project configuration file `" + filepath + "`.");
+      throw runtime_error("Failed to find project configuration file `" + filename + "`.");
     path = path.parent_path();
   }
   return path.string();
@@ -24,10 +24,13 @@ string ProjectVariables::lookup_variable_path() const
 
 void ProjectVariables::initialize()
 {
-  string path = lookup_variable_path() + '/' + filepath;
   string configuration_contents;
 
-  Crails::read_file(path, configuration_contents);
+  if (filesystem::exists(filename))
+    filepath = filesystem::canonical(filename).string();
+  else
+    filepath = (filesystem::path(lookup_variable_path()) / filepath).string();
+  Crails::read_file(filepath, configuration_contents);
   load(configuration_contents);
 }
 
@@ -56,5 +59,5 @@ void ProjectVariables::save()
   string output;
 
   append_to_string(output);
-  Crails::write_file("FILE", filepath, output);
+  Crails::write_file("FILE", filepath.length() ? filepath : filename, output);
 }
