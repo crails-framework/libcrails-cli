@@ -71,4 +71,21 @@ namespace Crails
     }
     return true;
   }
+
+  bool move_file(const filesystem::path& src, const filesystem::path& target)
+  {
+    if (filesystem::exists(src) && !filesystem::exists(target))
+    {
+      error_code ec;
+
+      filesystem::rename(src, target, ec);
+      if (ec)
+      {
+        filesystem::copy(src, target, filesystem::copy_options::recursive);
+        filesystem::remove_all(src);
+      }
+      return true;
+    }
+    return false;
+  }
 }
