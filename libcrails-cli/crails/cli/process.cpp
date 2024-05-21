@@ -1,6 +1,7 @@
 #include "process.hpp"
 #include <crails/utils/split.hpp>
 #include <boost/process.hpp>
+#include <boost/asio.hpp>
 #include <iostream>
 #include <filesystem>
 #ifndef _WIN32
@@ -73,13 +74,19 @@ namespace Crails
 
   bool run_command(const string& command, string& result)
   {
-    boost::process::ipstream stream;
-    boost::process::child process(command, boost::process::std_out > stream);
-    string line;
+    future<string> std_out;
+    boost::asio::io_service ios;
+    boost::process::child process(
+      command,
+      boost::process::std_in.close(),
+      boost::process::std_out > std_out,
+      ios
+    );
 
-    while (process.running() && getline(stream, line) && !line.empty())
-      result += line + '\n';
+    process.detach();
     process.wait();
+    ios.run();
+    result = std_out.get();
     return process.exit_code() == 0;
   }
 
