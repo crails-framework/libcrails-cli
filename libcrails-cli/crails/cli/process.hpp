@@ -3,6 +3,7 @@
 #include <string_view>
 #include <vector>
 #include <ostream>
+#include <filesystem>
 
 namespace Crails
 {
@@ -10,6 +11,7 @@ namespace Crails
   {
     std::string path;
     std::vector<std::string> arguments;
+    std::filesystem::path absolute_path() const;
     ExecutableCommand& operator<<(const std::string& v) { arguments.push_back(v); return *this; }
     ExecutableCommand& operator<<(const std::string_view v) { arguments.push_back(std::string(v)); return *this; }
     ExecutableCommand& operator<<(const char* v) { arguments.push_back(v); return *this; }

@@ -25,7 +25,12 @@ static bool is_executable_path(const filesystem::path& path)
 
 ostream& operator<<(ostream& stream, const Crails::ExecutableCommand& command)
 {
-  stream << command.path;
+  filesystem::path final_path = command.absolute_path();
+
+  if (filesystem::exists(final_path))
+    stream << final_path;
+  else
+    stream << command.path << "[not-found]";
   for (const string& argv : command.arguments)
   {
     if (argv.find(' ') == string::npos)
@@ -38,6 +43,13 @@ ostream& operator<<(ostream& stream, const Crails::ExecutableCommand& command)
 
 namespace Crails
 {
+  filesystem::path ExecutableCommand::absolute_path() const
+  {
+    if (filesystem::exists(path))
+      return path;
+    return which(path);
+  }
+
   string which(const string& command)
   {
     const char* env_path = getenv("PATH");
@@ -87,13 +99,21 @@ namespace Crails
 
   bool run_command(const ExecutableCommand& desc)
   {
-    boost::process::child process(
-      desc.path,
-      boost::process::args(desc.arguments)
-    );
+    filesystem::path path = desc.absolute_path();
 
-    process.wait();
-    return process.exit_code() == 0;
+    if (filesystem::exists(path))
+    {
+      boost::process::child process(
+        path.string(),
+        boost::process::args(desc.arguments)
+      );
+
+      process.wait();
+      return process.exit_code() == 0;
+    }
+    else
+      cerr << "Crails::run_command: command not found: " << desc.path << endl;
+    return -1;
   }
 
   bool run_command(const string& command, string& result)
@@ -116,21 +136,29 @@ namespace Crails
 
   bool run_command(const ExecutableCommand& desc, string& result)
   {
-    future<string> std_out;
-    boost::asio::io_context ios;
-    boost::process::child process(
-      desc.path,
-      boost::process::args(desc.arguments),
-      boost::process::std_in.close(),
-      boost::process::std_out > std_out,
-      ios
-    );
+    filesystem::path path = desc.absolute_path();
 
-    process.detach();
-    process.wait();
-    ios.run();
-    result = std_out.get();
-    return process.exit_code() == 0;
+    if (filesystem::exists(path))
+    {
+      future<string> std_out;
+      boost::asio::io_context ios;
+      boost::process::child process(
+        path.string(),
+        boost::process::args(desc.arguments),
+        boost::process::std_in.close(),
+        boost::process::std_out > std_out,
+        ios
+      );
+
+      process.detach();
+      process.wait();
+      ios.run();
+      result = std_out.get();
+      return process.exit_code() == 0;
+    }
+    else
+      cerr << "Crails::run_command: command not found: " << desc.path << endl;
+    return -1;
   }
 
   int execve(const string& command, const vector<string>& arguments)
