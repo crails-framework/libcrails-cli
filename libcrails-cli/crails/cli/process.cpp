@@ -23,6 +23,19 @@ static bool is_executable_path(const filesystem::path& path)
 #endif
 }
 
+ostream& operator<<(ostream& stream, const Crails::ExecutableCommand& command)
+{
+  stream << command.path;
+  for (const string& argv : command.arguments)
+  {
+    if (argv.find(' ') == string::npos)
+      stream << ' ' << argv;
+    else
+      stream << ' ' << quoted(argv);
+  }
+  return stream;
+}
+
 namespace Crails
 {
   string which(const string& command)
@@ -39,7 +52,7 @@ namespace Crails
       filesystem::path path = filesystem::path(part) / command;
 
 #ifdef _WIN32
-      vector<filesystem::path> candidate_paths{path, path + ".exe", path + ".bat"};
+      vector<filesystem::path> candidate_paths{path + ".exe", path + ".bat", path};
 
       for (const filesystem::path& candidate_path)
       {
@@ -72,12 +85,42 @@ namespace Crails
     return process.exit_code() == 0;
   }
 
+  bool run_command(const ExecutableCommand& desc)
+  {
+    boost::process::child process(
+      desc.path,
+      boost::process::args(desc.arguments)
+    );
+
+    process.wait();
+    return process.exit_code() == 0;
+  }
+
   bool run_command(const string& command, string& result)
   {
     future<string> std_out;
-    boost::asio::io_service ios;
+    boost::asio::io_context ios;
     boost::process::child process(
       command,
+      boost::process::std_in.close(),
+      boost::process::std_out > std_out,
+      ios
+    );
+
+    process.detach();
+    process.wait();
+    ios.run();
+    result = std_out.get();
+    return process.exit_code() == 0;
+  }
+
+  bool run_command(const ExecutableCommand& desc, string& result)
+  {
+    future<string> std_out;
+    boost::asio::io_context ios;
+    boost::process::child process(
+      desc.path,
+      boost::process::args(desc.arguments),
       boost::process::std_in.close(),
       boost::process::std_out > std_out,
       ios
