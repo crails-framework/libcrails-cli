@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <string_view>
 #include <vector>
 #include <ostream>
 
@@ -10,6 +11,8 @@ namespace Crails
     std::string path;
     std::vector<std::string> arguments;
     ExecutableCommand& operator<<(const std::string& v) { arguments.push_back(v); return *this; }
+    ExecutableCommand& operator<<(const std::string_view v) { arguments.push_back(std::string(v)); return *this; }
+    ExecutableCommand& operator<<(const char* v) { arguments.push_back(v); return *this; }
   };
 
   std::string which(const std::string& command);
