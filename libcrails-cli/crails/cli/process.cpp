@@ -23,6 +23,13 @@ static bool is_executable_path(const filesystem::path& path)
 #endif
 }
 
+struct ArgvArray
+{
+  const char** data;
+  ArgvArray(const std::vector<std::string>& argv_array) { data = new const char*[argv_array.size() + 1]; }
+  ~ArgvArray() { delete[] data; }
+};
+
 ostream& operator<<(ostream& stream, const Crails::ExecutableCommand& command)
 {
   filesystem::path final_path = command.absolute_path();
@@ -165,16 +172,16 @@ namespace Crails
   {
     if (command.length() > 0)
     {
-      const char* argv[arguments.size() + 1];
+      ArgvArray argv(arguments);
 
-      argv[0] = command.c_str();
+      argv.data[0] = command.c_str();
       for (size_t i = 1 ; i <= arguments.size() ; ++i)
-        argv[i] = arguments[i - 1].c_str();
-      argv[arguments.size() + 1] = nullptr;
+        argv.data[i] = arguments[i - 1].c_str();
+      argv.data[arguments.size() + 1] = nullptr;
 #ifndef _WIN32
-      return ::execve(command.c_str(), const_cast<char **const>(argv), nullptr);
+      return ::execve(command.c_str(), const_cast<char **const>(argv.data), nullptr);
 #else
-      return _execve(command.c_str(), const_cast<char **const>(argv), nullptr);
+      return _execve(command.c_str(), const_cast<char **const>(argv.data), nullptr);
 #endif
     }
     return 0;
