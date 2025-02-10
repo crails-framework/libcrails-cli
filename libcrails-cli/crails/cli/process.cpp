@@ -125,12 +125,14 @@ namespace Crails
 
   bool run_command(const string& command, string& result)
   {
-    future<string> std_out;
+    future<string> std_out, std_err;
+    string errors;
     boost::asio::io_context ios;
     boost::process::child process(
       command,
       boost::process::std_in.close(),
       boost::process::std_out > std_out,
+      boost::process::std_err > std_err,
       ios
     );
 
@@ -138,6 +140,9 @@ namespace Crails
     process.wait();
     ios.run();
     result = std_out.get();
+    errors = std_err.get();
+    if (errors.length())
+      cerr << errors << endl;
     return process.exit_code() == 0;
   }
 
@@ -147,13 +152,15 @@ namespace Crails
 
     if (filesystem::exists(path))
     {
-      future<string> std_out;
+      future<string> std_out, std_err;
+      string errors;
       boost::asio::io_context ios;
       boost::process::child process(
         path.string(),
         boost::process::args(desc.arguments),
         boost::process::std_in.close(),
         boost::process::std_out > std_out,
+        boost::process::std_err > std_err,
         ios
       );
 
@@ -161,6 +168,9 @@ namespace Crails
       process.wait();
       ios.run();
       result = std_out.get();
+      errors = std_err.get();
+      if (errors.length())
+        cerr << path << ": " << errors << endl;
       return process.exit_code() == 0;
     }
     else
