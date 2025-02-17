@@ -40,7 +40,9 @@ namespace Crails
         }
       }
       else
-        cerr << "[FILE] `" << path.string() << "` could not be generated: template not found." << endl;
+      {
+        cerr << "[FILE] " << path << " could not be generated: template not found." << endl;
+      }
       return false;
     }
   };
