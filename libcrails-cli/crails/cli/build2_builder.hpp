@@ -49,16 +49,24 @@ public:
     if (options & BuildVerbose)
       std::cout << "+ " << bpkg_add << std::endl;
     return Crails::run_command(bpkg_add)
-        && Crails::run_command(Crails::which("bpkg") + " fetch");
+        && Crails::run_command(Crails::which("bpkg") + " fetch")
+        && build(package_name, true);
   }
 
   bool build()
+  {
+    return build(package_name);
+  }
+
+  bool build(const std::string& package_name, bool only_configure = false)
   {
     Crails::ExecutableCommand command{Crails::which("bpkg")};
 
     command << "build" << package_name;
     if (options & BuildVerbose)
       command << "--verbose=4";
+    if (only_configure)
+      command << "--configure-only";
     for (const std::string& system_package : system_packages)
       command << ("?sys:" + system_package + "/*");
     if (options & BuildVerbose)
