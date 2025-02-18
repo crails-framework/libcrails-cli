@@ -129,7 +129,7 @@ namespace Crails
     }
     else
       cerr << "Crails::run_command: command not found: " << desc.path << endl;
-    return -1;
+    return false;
   }
 
   bool run_command(const string& command, string& result)
