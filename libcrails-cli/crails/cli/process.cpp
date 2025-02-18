@@ -15,10 +15,11 @@ using namespace std;
 static bool is_executable_path(const filesystem::path& path)
 {
   error_code ec;
-  bool regular_file = filesystem::is_regular_file(path, ec);
 #ifdef _WIN32
+  bool regular_file = filesystem::is_regular_file(path.string(), ec);
   return !ec && regular_file;
 #else
+  bool regular_file = filesystem::is_regular_file(path, ec);
   return !ec && regular_file && ::access(path.string().c_str(), X_OK) == 0;
 #endif
 }
@@ -84,8 +85,8 @@ namespace Crails
 
       for (const filesystem::path& candidate_path : candidate_paths)
       {
-        if (is_executable_path(path))
-          return path.string();
+        if (is_executable_path(candidate_path))
+          return candidate_path.string();
       }
 #else
       if (is_executable_path(path))
