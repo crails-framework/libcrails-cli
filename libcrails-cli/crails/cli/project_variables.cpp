@@ -2,6 +2,7 @@
 #include "filesystem.hpp"
 #include <crails/read_file.hpp>
 #include <crails/utils/string.hpp>
+#include <crails/utils/semantics.hpp>
 #include <filesystem>
 #include <list>
 #include <sstream>
@@ -41,7 +42,8 @@ void ProjectVariables::load(const std::string& configuration_contents)
   configuration_lines = Crails::split(configuration_contents, '\n');
   for (auto configuration_line : configuration_lines)
   {
-    auto parts = Crails::split(configuration_line, ':', true);
+    auto stripped_line = Crails::strip(configuration_line, '\r');
+    auto parts = Crails::split(stripped_line, ':', true);
 
     if (parts.size() >= 2)
       variables.emplace(*parts.begin(), Crails::join(++parts.begin(), parts.end(), ':'));
