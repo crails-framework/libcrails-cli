@@ -85,11 +85,11 @@ namespace Crails
       for (const filesystem::path& candidate_path : candidate_paths)
       {
         if (is_executable_path(path))
-          return path;
+          return path.string();
       }
 #else
       if (is_executable_path(path))
-        return path;
+        return path.string();
 #endif
     }
     return string();
