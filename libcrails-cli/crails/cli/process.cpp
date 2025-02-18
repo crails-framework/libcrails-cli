@@ -62,18 +62,27 @@ namespace Crails
     const char* env_path = getenv("PATH");
     string current_path = filesystem::current_path().string();
     list<string_view> candidates;
+#ifdef _WIN32
+    char env_separator = ';';
+#else
+    char env_separator = ':';
+#endif
 
     if (env_path)
-      candidates = Crails::split<string_view>(env_path, ':');
+      candidates = Crails::split<string_view>(env_path, env_separator);
     candidates.insert(candidates.begin(), string_view(current_path));
     for (const string_view part : candidates)
     {
       filesystem::path path = filesystem::path(part) / command;
 
 #ifdef _WIN32
-      vector<filesystem::path> candidate_paths{path + ".exe", path + ".bat", path};
+      vector<filesystem::path> candidate_paths{
+        filesystem::path(path.string() + ".exe"),
+        filesystem::path(path.string() + ".bat"),
+        path
+      };
 
-      for (const filesystem::path& candidate_path)
+      for (const filesystem::path& candidate_path : candidate_paths)
       {
         if (is_executable_path(path))
           return path;
