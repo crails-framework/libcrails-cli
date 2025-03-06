@@ -3,7 +3,11 @@
 #include "process.hpp"
 #include "build_options.hpp"
 #include <boost/process.hpp>
-#include <boost/process/env.hpp>
+#if BOOST_VERSION >= 108600 // 1.86
+# include <boost/process/v1/env.hpp>
+#else
+# include <boost/process/env.hpp>
+#endif
 #include <filesystem>
 #include <iostream>
 
