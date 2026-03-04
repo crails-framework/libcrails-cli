@@ -2,7 +2,7 @@ import intf_libs += libboost-program-options%lib{boost_program_options}
 import intf_libs += libcrails-readfile%lib{crails-readfile}
 import intf_libs += libcrails-semantics%lib{crails-semantics}
 
-if ($config.libcrails_cli.alt_build2_imports)
+if ($config.libcrails_cli.alt_build2_imports && $config.libcrails_cli.boost_process_separate_compilation)
   import libs += libboost-process%lib{boost_process}
 else
   import intf_libs += libboost-process%lib{boost_process}
@@ -16,6 +16,9 @@ hxx{export}@./: cxx.importable = false
 # Build options.
 #
 cxx.poptions =+ "-I$out_root" "-I$src_root"
+
+if ($config.libcrails_cli.boost_process_separate_compilation)
+  cxx.poptions += "-DLIBCRAILS_CLI_BOOST_PROCESS_SEPARATE_COMPILATION"
 
 {hbmia obja}{*}: cxx.poptions += -DLIBCRAILS_CLI_STATIC_BUILD
 {hbmis objs}{*}: cxx.poptions += -DLIBCRAILS_CLI_SHARED_BUILD

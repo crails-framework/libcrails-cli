@@ -2,12 +2,6 @@
 #include "with_path.hpp"
 #include "process.hpp"
 #include "build_options.hpp"
-#include <boost/process.hpp>
-#if BOOST_VERSION >= 108600 // 1.86
-# include <boost/process/v1/env.hpp>
-#else
-# include <boost/process/env.hpp>
-#endif
 #include <filesystem>
 #include <iostream>
 
@@ -36,41 +30,36 @@ public:
     return Crails::which("cmake").length() > 0;
   }
 
-  boost::process::native_environment environment()
+  std::unordered_map<std::string,std::string> environment() const
   {
-    auto env = boost::this_process::environment();
-    std::string pkg_config_path = "/usr/local/lib/pkgconfig";
-
-    env["PKG_CONFIG_PATH"] = pkg_config_path;
-    return env;
+    return {
+      {"PKG_CONFIG_PATH", "/usr/local/lib/pkgconfig"}
+    };
   }
 
   bool configure()
   {
-    std::string command = "cmake " + options.str() + project_directory.string();
-    if (verbose) std::cout << "+ " << command << std::endl;
-    boost::process::child cmake(command, environment());
+    std::string input = "cmake " + options.str() + project_directory.string();
+    auto command = Crails::ExecutableCommand::from_string(input);
 
-    cmake.wait();
-    return cmake.exit_code() == 0;
+    command.env = environment();
+    if (verbose) std::cout << "+ " << command << std::endl;
+    return Crails::run_command(command);
   }
 
   bool make()
   {
-    std::string command = verbose ? "make VERBOSE=1" : "make";
-    if (verbose) std::cout << "+ " << command << std::endl;
-    boost::process::child make(command, environment());
+    std::string input = verbose ? "make VERBOSE=1" : "make";
+    auto command = Crails::ExecutableCommand::from_string(input);
 
-    make.wait();
-    return make.exit_code() == 0;
+    command.env = environment();
+    if (verbose) std::cout << "+ " << command << std::endl;
+    return Crails::run_command(command);
   }
 
   bool clean()
   {
-    boost::process::child clean("make clean", environment());
-
-    clean.wait();
-    return clean.exit_code() == 0;
+    return Crails::run_command({"make", {"clean"}, environment()});
   }
 
   bool build()

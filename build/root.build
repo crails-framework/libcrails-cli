@@ -1,4 +1,5 @@
 config [bool] config.libcrails_cli.alt_build2_imports ?= false
+config [bool] config.libcrails_cli.boost_process_separate_compilation ?= true
 
 # Uncomment to suppress warnings coming from external libraries.
 #
