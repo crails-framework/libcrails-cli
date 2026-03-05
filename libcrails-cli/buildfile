@@ -19,6 +19,8 @@ cxx.poptions =+ "-I$out_root" "-I$src_root"
 
 if ($config.libcrails_cli.boost_process_separate_compilation)
   cxx.poptions += "-DLIBCRAILS_CLI_BOOST_PROCESS_SEPARATE_COMPILATION"
+if ($config.libcrails_cli.boost_process_force_v1)
+  cxx.poptions += "-DLIBCRAILS_CLI_BOOST_PROCESS_V1"
 
 {hbmia obja}{*}: cxx.poptions += -DLIBCRAILS_CLI_STATIC_BUILD
 {hbmis objs}{*}: cxx.poptions += -DLIBCRAILS_CLI_SHARED_BUILD

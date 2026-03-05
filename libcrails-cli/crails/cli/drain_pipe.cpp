@@ -1,4 +1,6 @@
-#include "drain_pipe.hpp"
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 107800 // 1.86
+# include "drain_pipe.hpp"
 
 using namespace std;
 
@@ -20,3 +22,5 @@ namespace Crails
     return result;
   }
 }
+
+#endif
