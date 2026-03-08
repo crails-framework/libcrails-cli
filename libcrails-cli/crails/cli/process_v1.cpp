@@ -128,7 +128,18 @@ namespace Crails
     return run_command(ExecutableCommand::from_string(command), result);
   }
 
-  bool run_command(const ExecutableCommand& desc, string& result)
+  bool run_command(const ExecutableCommand& desc, string& std_out)
+  {
+    ExecutableCommandOutput result;
+    bool retval = run_command(desc, result);
+
+    std_out = std::move(result.out);
+    if (result.error.length())
+      cerr << desc.absolute_path() << ": " << result.error << endl;
+    return retval;
+  }
+
+  bool run_command(const ExecutableCommand& desc, ExecutableCommandOutput& result)
   {
     filesystem::path path = desc.absolute_path();
 
@@ -150,10 +161,8 @@ namespace Crails
       process.detach();
       process.wait();
       ios.run();
-      result = std_out.get();
-      errors = std_err.get();
-      if (errors.length())
-        cerr << path << ": " << errors << endl;
+      result.out = std_out.get();
+      result.error = std_err.get();
       return process.exit_code() == 0;
     }
     else

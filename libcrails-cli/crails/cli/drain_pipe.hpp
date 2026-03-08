@@ -5,7 +5,7 @@
 
 namespace Crails
 {
-  std::string drain_pipe(boost::asio::readable_pipe&);
+  std::string drain_pipe(boost::asio::readable_pipe&, std::size_t buffer_capacity = -1);
 }
 
 #else

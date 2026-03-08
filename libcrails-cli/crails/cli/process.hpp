@@ -6,6 +6,7 @@
 #include <ostream>
 #include <filesystem>
 #include <system_error>
+#include <chrono>
 
 namespace Crails
 {
@@ -14,6 +15,7 @@ namespace Crails
     std::string path;
     std::vector<std::string> arguments;
     std::unordered_map<std::string,std::string> env;
+    std::chrono::milliseconds timeout = std::chrono::milliseconds::zero();
     std::filesystem::path absolute_path() const;
     ExecutableCommand& operator<<(const std::string& v) { arguments.push_back(v); return *this; }
     ExecutableCommand& operator<<(const std::string_view v) { arguments.push_back(std::string(v)); return *this; }
@@ -24,8 +26,10 @@ namespace Crails
 
   struct ExecutableCommandOutput
   {
-    int status = -1;
+    std::size_t buffer_capacity = -1;
     std::string out, error;
+    int status = -1;
+    bool timed_out = false;
   };
 
   std::string which(const std::string_view command);

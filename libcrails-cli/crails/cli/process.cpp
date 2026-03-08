@@ -4,6 +4,7 @@
 #include <crails/utils/split.hpp>
 #include <iostream>
 #include <filesystem>
+#include <future>
 #ifndef _WIN32
 # include <unistd.h>
 #else
@@ -146,7 +147,16 @@ namespace Crails
         make_environment(desc)
       );
 
-      process.wait();
+      if (desc.timeout == chrono::milliseconds::zero())
+      {
+        process.wait();
+      }
+      else if (async(launch::async, [&process]() { process.wait(); }).wait_for(desc.timeout) == future_status::timeout)
+      {
+        cerr << "Crails::run_command: command timed out: " << desc.path << endl;
+        process.terminate();
+        return false;
+      }
       return process.exit_code() == 0;
     }
     else
@@ -181,12 +191,27 @@ namespace Crails
         boost_process::process_stdio{nullptr, std_out, std_err},
         make_environment(desc)
       );
+      future<string> future_out = async(launch::async, &drain_pipe, ref(std_out), result.buffer_capacity);
+      future<string> future_err = async(launch::async, &drain_pipe, ref(std_err), result.buffer_capacity);
 
-      process.wait();
-      result.out = drain_pipe(std_out);
-      result.error = drain_pipe(std_err);
+      if (desc.timeout == chrono::milliseconds::zero())
+      {
+        process.wait();
+      }
+      else
+      {
+        future<void> future_end = async(launch::async, [&process]() { process.wait(); });
+
+        if (future_end.wait_for(desc.timeout) == future_status::timeout)
+        {
+          result.timed_out = true;
+          process.terminate();
+        }
+      }
+      result.out = future_out.get();
+      result.error = future_err.get();
       result.status = process.exit_code();
-      return result.status == 0;
+      return result.status == 0 && !result.timed_out;
     }
     else
       cerr << "Crails::run_command: command not found: " << desc.path << endl;
