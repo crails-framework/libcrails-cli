@@ -22,11 +22,19 @@ namespace Crails
     static ExecutableCommand from_string(const std::string_view);
   };
 
+  struct ExecutableCommandOutput
+  {
+    int status = -1;
+    std::string out, error;
+  };
+
   std::string which(const std::string_view command);
   bool run_command(const ExecutableCommand&);
   bool run_command(const ExecutableCommand&, std::string& result);
+  bool run_command(const ExecutableCommand&, ExecutableCommandOutput&);
   bool run_command(const std::string_view command);
   bool run_command(const std::string_view command, std::string& result);
+  bool run_command(const std::string_view command, ExecutableCommandOutput&);
   bool require_command(const std::string_view command);
   int  execve(const std::string& command, const std::vector<std::string>& arguments);
 }

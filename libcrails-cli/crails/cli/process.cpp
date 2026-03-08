@@ -127,6 +127,11 @@ namespace Crails
     return run_command(ExecutableCommand::from_string(command), result);
   }
 
+  bool run_command(const string_view command, ExecutableCommandOutput& result)
+  {
+    return run_command(ExecutableCommand::from_string(command), result);
+  }
+
   bool run_command(const ExecutableCommand& desc)
   {
     filesystem::path path = desc.absolute_path();
@@ -149,7 +154,18 @@ namespace Crails
     return false;
   }
 
-  bool run_command(const ExecutableCommand& desc, string& result)
+  bool run_command(const ExecutableCommand& desc, string& std_out)
+  {
+    ExecutableCommandOutput result;
+    bool retval = run_command(desc, result);
+
+    std_out = std::move(result.out);
+    if (result.error.length())
+      cerr << desc.absolute_path() << ": " << result.error << endl;
+    return retval;
+  }
+
+  bool run_command(const ExecutableCommand& desc, ExecutableCommandOutput& result)
   {
     filesystem::path path = desc.absolute_path();
 
@@ -167,11 +183,10 @@ namespace Crails
       );
 
       process.wait();
-      result = drain_pipe(std_out);
-      errors = drain_pipe(std_err);
-      if (errors.length())
-        cerr << path << ": " << errors << endl;
-      return process.exit_code() == 0;
+      result.out = drain_pipe(std_out);
+      result.error = drain_pipe(std_err);
+      result.status = process.exit_code();
+      return result.status == 0;
     }
     else
       cerr << "Crails::run_command: command not found: " << desc.path << endl;
