@@ -3,6 +3,7 @@
 #include "process.hpp"
 #include "build_options.hpp"
 #include <filesystem>
+#include <sstream>
 #include <iostream>
 
 class CMakeBuilder : private Crails::WithPath
